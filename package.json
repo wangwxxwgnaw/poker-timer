@@ -2,12 +2,13 @@
   "name": "glitch-hello-react",
   "version": "0.0.5",
   "description": "A simple React single page app, built with Vite and React.",
+  "homepage": "https://wangwxxwgnaw.github.io/poker-timer/",
   "scripts": {
     "start": "vite",
     "build": "vite build",
     "serve": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build -r https://github.com/wangwxxwgnaw/poker-timer.git -b gh-pages"
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.0.3",
