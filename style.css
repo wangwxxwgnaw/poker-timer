@@ -1,0 +1,76 @@
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+}
+
+.countdown-container {
+  text-align: center;
+}
+
+h1 {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50; /* 灰色背景 */
+  color: white;           /* 白色文字 */
+}
+
+button.disabled {
+  cursor: not-allowed;    /* 禁用状态的光标 */
+}
+
+button.enabled {
+  cursor: pointer;        /* 正常状态的光标 */
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column; /* 纵向排列 */
+  gap: 5vh; /* 按钮间距，使用视口高度单位 */
+}
+
+.green-button,
+.red-button {
+  background-color: #4CAF50; /* 绿色背景 */
+  color: white;
+  padding: 4vh; /* 按钮高度，使用视口高度单位 */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 3vw; /* 字体大小使用视口宽度单位 */
+}
+
+.green-button:hover {
+  background-color: #45a049; /* 悬停效果 */
+}
+
+.red-button {
+  background-color: #f44336; /* 红色背景 */
+}
+
+.red-button:hover {
+  background-color: #d32f2f; /* 悬停效果 */
+}
+
+/* 媒体查询：针对小屏幕进行额外调整 */
+@media (max-width: 600px) {
+  .button-container {
+    gap: 5vh; /* 增加间距 */
+  }
+
+  .green-button,
+  .red-button {
+    padding: 4vh; /* 增加按钮高度 */
+    font-size: 6vw; /* 增加字体大小 */
+  }
+}
