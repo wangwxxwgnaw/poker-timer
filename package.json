@@ -5,11 +5,14 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build -r https://github.com/wangwxxwgnaw/poker-timer.git -b gh-pages"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.0.3",
     "@wxwanggnawxw/react-7-segment-display": "^1.2.1",
+    "gh-pages": "^6.1.1",
     "peerjs": "^1.5.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
