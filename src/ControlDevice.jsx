@@ -3,13 +3,13 @@ import React, { useState, useEffect } from "react";
 import Peer from "peerjs";
 
 const ControlDevice = () => {
-  const [newSending, setNewSending] = useState(false);
-  const [signal, setSignal] = useState("start 10s");
+  const [peer, setPeer] = useState(null);
   const [conn, setConn] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    const peer = new Peer();
+    let peer = new Peer();
+    setPeer(peer);
     peer.on("open", (id) => {
       console.log("Control id", id);
       const conn = peer.connect("slave-device-id"); // 使用从设备的ID进行连接
@@ -17,19 +17,38 @@ const ControlDevice = () => {
         console.log("Successfully connected to the slave device");
         setConn(conn);
       });
+
+      conn.on("error", () => {
+        console.log("Connection failure");
+        setConn(null);
+      })
     });
-    
+
     // 清理函数
     return () => {
       peer.disconnect(); // 断开连接
       peer.destroy(); // 销毁 Peer 实例
+      setPeer(null);
       console.log("Control peer destroyed");
     };
   }, []);
 
   // 发送信号到从设备
   function sendSignal(signal) {
-    if (conn !== null) conn.send(signal);
+    if (conn !== null) {
+      conn.send(signal);
+    } else {
+      const conn = peer.connect("slave-device-id"); // 使用从设备的ID进行连接
+      conn.on("open", () => {
+        console.log("Successfully connected to the slave device");
+        conn.send(signal);
+        setConn(conn);
+      });
+      conn.on("error", () => {
+        console.log("Connection failure");
+        setConn(null);
+      })
+    }
   }
 
   // 当点击按钮时发送信号

@@ -1,12 +1,12 @@
 import Peer from "peerjs";
 import React, { useState, useEffect, useRef } from "react";
-import { Display } from "@wxwanggnawxw/react-7-segment-display";
+import { Display } from "debug-react-7-segment-display";
 import { playAudio } from "./AudioManager";
 
 let clearFunction = () => {};
 let countdownTime = 10 * 1000;
 
-const FullscreenButton = () => {
+const FullscreenButton = (number, isPaused) => {
   const enterFullscreen = () => {
     const element = document.documentElement; // 使用整个文档进入全屏
 
@@ -24,8 +24,16 @@ const FullscreenButton = () => {
     }
   };
 
+  const [filterType, setFilterType] = useState(0);
+  useEffect(() => {
+    setFilterType(1 - filterType);
+  },[number, isPaused]);
+
   return (
-    <div>
+    <div style={{
+      filter: filterType == 1 ? "drop-shadow(0px 0px 1px white)" : "drop-shadow(0px 0px 2px white)",
+      trasform: "translateZ(0)",
+    }}>
       <button
         onClick={enterFullscreen}
         style={{
@@ -53,15 +61,13 @@ const FullscreenButton = () => {
 const MyTimer = React.memo(({ number, isPaused, isAdded }) => {
   const lastNumberRef = useRef(number);
   const lastIsPausedRef = useRef(isPaused);
+  // 偶尔情况，需要渲染两次
+  const [dummy, setDummy] = useState(0);
 
   useEffect(() => {
     // 播放声音逻辑
     // 播放声音逻辑
     if (number <= 5 && number !== lastNumberRef.current) {
-      console.log("Check1", lastNumberRef.current);
-      console.log("Check2", number);
-      console.log("!==", number !== lastNumberRef.current);
-      console.log("!=", number != lastNumberRef.current);
       if (number % 2 === 0) {
         console.log("tick2");
         playAudio("tick2");
@@ -88,6 +94,15 @@ const MyTimer = React.memo(({ number, isPaused, isAdded }) => {
     : isAdded
     ? "#00a7ff"
     : "#01df00";
+  const lastColor = useRef(color);
+  // 手动渲染第二次
+  useEffect(() => {
+    if (lastColor.current != color) {
+      setDummy(1 - dummy);
+      lastColor.current = color;
+    }
+  });
+  console.log("Rendering");
   let gray = isPaused ? 0.1 : number <= 5 ? 0.25 : isAdded ? 0.15 : 0.15;
   number = number.toString();
   const height = window.innerHeight;
@@ -100,6 +115,7 @@ const MyTimer = React.memo(({ number, isPaused, isAdded }) => {
       gray={gray}
       height={displayHeight}
       leadingZeroes={false}
+      diffRendering={dummy}
     />
   );
 });
@@ -183,20 +199,20 @@ const SlaveDevice = () => {
 
   return (
     <div
-      //style={{
-        //backgroundColor: "black",
-      //  height: "100vh",
-       // width: "100vw",
-       // color: "white",
-       // display: "flex",
-       // alignItems: "center",
-        //justifyContent: "center",
-      //}}
+      style={{
+        backgroundColor: "black",
+       height: "100vh",
+       width: "100vw",
+       color: "white",
+       display: "flex",
+       alignItems: "center",
+        justifyContent: "center",
+      }}
     >
-      <MyTimer number={timerTime} isPaused={isPaused} isAdded={isAdded} />
       <div>
-        <FullscreenButton />
+        <FullscreenButton number={timerTime} isPaused={isPaused} />
       </div>
+      <MyTimer number={timerTime} isPaused={isPaused} isAdded={isAdded} />
     </div>
   );
 };
