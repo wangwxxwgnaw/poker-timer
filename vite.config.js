@@ -6,7 +6,8 @@ export default defineConfig({
   plugins: [react()],
   base: './',
   build: {
-    outDir: "build"
+    outDir: "build",
+    assetsInclude: ['**/*.mp3', '**/*.wav'],
   },
   server: {
     host:"0.0.0.0",

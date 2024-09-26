@@ -76,13 +76,6 @@ const MyTimer = React.memo(({ number, isPaused, isAdded }) => {
         playAudio("tick1");
       }
     }
-
-    if (
-      lastIsPausedRef.current !== null &&
-      lastIsPausedRef.current !== isPaused
-    ) {
-      playAudio("pause");
-    }
     lastIsPausedRef.current = isPaused;
     lastNumberRef.current = number;
   }, [number, isPaused]);
@@ -159,7 +152,10 @@ const SlaveDevice = () => {
       setNewControl(false);
       if (message === "pause") {
         clearFunction();
-        setIsPaused(true);
+        if (!isPaused) {
+          setIsPaused(true);
+          playAudio("pause");
+        }
       } else {
         clearFunction();
         setIsPaused(false);
@@ -168,25 +164,26 @@ const SlaveDevice = () => {
         if (message === "resume") {
           console.log("resume");
           endTime = startTime + timerTime * 1000;
+          playAudio("pause");
         } else {
           endTime = startTime + countdownTime;
           // 清除超时状态
           setIsAdded(false);
           // 播放下一个人的提示音
-          playAudio("pause");
+          playAudio("nextRound");
         }
         const timer = setInterval(() => {
           const now = performance.now();
           const timeLeft = (endTime - now) / 1000;
-          if (timeLeft > 0) {
-            const intSeconds = Math.floor(timeLeft);
+          if (timeLeft >= 0) {
+            const intSeconds = Math.ceil(timeLeft);
             setTimerTime(intSeconds);
           } else {
             // 自动加上20秒
             endTime = endTime + 20 * 1000;
             const now = performance.now();
             const timeLeft = (endTime - now) / 1000;
-            const intSeconds = Math.floor(timeLeft);
+            const intSeconds = Math.ceil(timeLeft);
             setTimerTime(intSeconds);
             setIsAdded(true); // 正在超时中
             playAudio("outOfTime");
