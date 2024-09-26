@@ -1,37 +1,34 @@
 import React, { useEffect, useRef } from "react";
 
-
 const audioDict = {};
-
+let audioContext = null;
 
 function loadAudioBuffer(url, name) {
   fetch(url)
     .then(response => response.arrayBuffer())
     .then(data => {
-      context.decodeAudioData(data, (buffer) => {
+      audioContext.decodeAudioData(data, (buffer) => {
         audioDict[name] = buffer;
       });
     });
 }
 
-
 export function preloadAudio() {
-  audioDict["tick1"] = loadAudioBuffer("./timeReminder_01.wav");
-  audioDict["tick2"] = loadAudioBuffer("./timeReminder_02.wav");
-  audioDict["pause"] = loadAudioBuffer("./pause.mp3");
-  audioDict["outOfTime"] = loadAudioBuffer("./outOfTimeOther.mp3");
-  audioDict["nextRound"] = loadAudioBuffer("./bell.wav");
-  Object.values(audioDict).forEach((audio) => {
-    audio.load();  // 确保音频文件被预加载
-  });
+  audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  loadAudioBuffer("./timeReminder_01.wav", "tick1");
+  loadAudioBuffer("./timeReminder_02.wav", "tick2");
+  loadAudioBuffer("./pause.mp3", "pause");
+  loadAudioBuffer("./outOfTimeOther.mp3", "outOfTime");
+  loadAudioBuffer("./bell.wav", "nextRound");
 }
 
 
-export function playAudio(soundKey) {
-  // 创建一个音频文件字典
-  const audio = audioDict[soundKey];
-    if (audio) {
-      audio.currentTime = 0;  // 每次从头开始播放
-      audio.play();
-    }
+
+export function playAudio(name) {
+  const audioBuffer = audioDict[name];
+  // 创建新的音频源并播放
+  const source = audioContext.createBufferSource();
+  source.buffer = audioBuffer;
+  source.connect(audioContext.destination);
+  source.start();
 }
