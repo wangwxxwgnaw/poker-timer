@@ -23,10 +23,10 @@ const App = () => {
       {!deviceRole && ( // 如果未选择设备，显示选择按钮
         <div className="button-container">
           <button className="green-button" onClick={loadControlDevice}>
-            加载主设备代码
+            控制端
           </button>
           <button className="green-button" onClick={loadSlaveDevice}>
-            加载从设备代码
+            计时器端
           </button>
         </div>
       )}

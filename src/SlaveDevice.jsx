@@ -126,7 +126,7 @@ const SlaveDevice = () => {
       console.log("Slave id", id);
       peer.on("connection", (conn) => {
         console.log("Found connection on slave!");
-        conn.on("data", (data) => handleMessage(data));
+        conn.on("data", (data) => handleMessage(data, conn));
       });
     });
     // 清理函数
@@ -137,13 +137,18 @@ const SlaveDevice = () => {
     };
   }, []);
 
-  const handleMessage = (data) => {
-    setNewControl(true);
-    setMessage(data.action);
-    if (data.action === "start 10s") {
-      countdownTime = 10 * 1000;
-    } else if (data.action === "start 20s") {
-      countdownTime = 20 * 1000;
+  const handleMessage = (data, conn) => {
+    if ("action" in data) {
+      setNewControl(true);
+      setMessage(data.action);
+      if (data.action === "start 10s") {
+        countdownTime = 10 * 1000;
+      } else if (data.action === "start 20s") {
+        countdownTime = 20 * 1000;
+      }
+    }
+    else if ("heartbeat" in data) {
+      conn.send({replyHeartbeat: data.heartbeat});
     }
   };
 
